@@ -17,9 +17,6 @@
             var $this = this;
             //初始化数据
             $this._initType();
-            //初始化样式
-            $this._initCss();
-
 
             $this._mouseDown();
             $this._mouseMove();
@@ -44,6 +41,14 @@
             }else{
                 $this.$parent = $this.$element.parents($this.ops.parent);
             }
+            //判断是否设置拖动节点，如果指定了拖动节点，设置$drag_handler为指定的节点，否则，将默认的拖动块设置为拖动节点
+            if ($this.ops.dragHandler === ''){
+                $this.$drag_handler = $this.$element;
+            }else{
+                $this.$drag_handler = $($this.ops.dragHandler);
+            }
+            //初始化css样式
+            $this._initCss();
             //鼠标按下的时候的鼠标位置
             $this.down_x_y = {
                 down_x: 0,
@@ -67,12 +72,7 @@
                 movable_y_bottom : $this.ops.movable_region[2] == 0 ? $this.$parent.innerHeight() - $this.$element.innerHeight() : $this.ops.movable_region[2]
             };
             $this._initPosition();
-            //判断是否设置拖动节点，如果指定了拖动节点，设置$drag_handler为指定的节点，否则，将默认的拖动块设置为拖动节点
-            if ($this.ops.dragHandler === ''){
-                $this.$drag_handler = $this.$element;
-            }else{
-                $this.$drag_handler = $($this.ops.dragHandler);
-            }
+
         },
         /**
          * @private
@@ -181,9 +181,9 @@
         return this;
     };
     $.fn.drag.default = {
-        cursor : 'move',
-        parent : 'parent',
-        dragHandler : '',
-        movable_region : [0,0,0,0]
+        cursor : 'move',            //鼠标移动到dragHandler节点上时的鼠标样式
+        parent : 'parent',          //拖动控件的参考父元素
+        dragHandler : '',           //触发拖动的节点
+        movable_region : [0,0,0,0]  //允许拖动的区域
     };
 })(jQuery,window,document);
