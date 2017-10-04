@@ -22,6 +22,8 @@
             $this._mouseMove();
             $this._mouseUp();
         },
+
+
         /**
          * @private
          * 初始化type
@@ -74,6 +76,8 @@
             $this._initPosition();
 
         },
+
+
         /**
          * @private
          * 初始化css样式
@@ -87,6 +91,8 @@
             $this.$parent.css("position","relative");
             $this.$drag_handler.css("cursor",$this.ops.cursor);
         },
+
+
         /**
          * @private
          * 初始化元素的位置
@@ -100,6 +106,8 @@
                 $this.$element.css("top",$this.movable_region.movable_y_top);
             }
         },
+
+
         /**
          * @private
          * 鼠标弹起事件
@@ -112,6 +120,8 @@
                 $this.IS_DOWN = false;
             })
         },
+
+
         /**
          * @private
          * 鼠标按下事件
@@ -131,6 +141,8 @@
                 $this.drag_block_x_y.drag_block_y = $this.$element.position().top;
             })
         },
+
+
         /**
          * @private
          * 鼠标移动事件
@@ -140,7 +152,80 @@
          */
         _mouseMove : function(){
             var $this = this;
+            if($this.ops.direction == "all"){
+                $this._moveDirectionAll();
+            }else if($this.ops.direction == "X" || $this.ops.direction == "x"){
+                $this._moveDirectionX();
+            }else if($this.ops.direction == "Y" || $this.ops.direction == "y"){
+                $this._moveDirectionY();
+            }
 
+        },
+
+        /**
+         * @private
+         *  拖动控件只能水平移动
+         */
+        _moveDirectionX : function(){
+            var $this = this;
+            $(document).on("mousemove",function(e){
+                if ($this.IS_DOWN){
+                    $this.move_x_y.move_x = e.pageX - $this.down_x_y.down_x;
+                    $this.move_x_y.move_y = e.pageY - $this.down_x_y.down_y;
+
+                    $this.$element.css({
+                        top : $this.drag_block_x_y.drag_block_y + "px",
+                        left : $this.drag_block_x_y.drag_block_x + $this.move_x_y.move_x + "px"
+                    });
+                    if (($this.drag_block_x_y.drag_block_x + $this.move_x_y.move_x) < $this.movable_region.movable_x_left){
+                        $this.$element.css({
+                            left : $this.movable_region.movable_x_left +"px"
+                        });
+                    }
+                    if(($this.drag_block_x_y.drag_block_x + $this.move_x_y.move_x) > $this.movable_region.movable_x_right){
+                        $this.$element.css({
+                            left : $this.movable_region.movable_x_right+"px"
+                        });
+                    }
+                }
+            })
+        },
+
+        /**
+         * @private
+         * 拖动控件只能沿着垂直方向移动
+         */
+        _moveDirectionY : function(){
+            var $this = this;
+            $(document).on("mousemove",function(e){
+                if ($this.IS_DOWN){
+                    $this.move_x_y.move_x = e.pageX - $this.down_x_y.down_x;
+                    $this.move_x_y.move_y = e.pageY - $this.down_x_y.down_y;
+
+                    $this.$element.css({
+                        top : $this.drag_block_x_y.drag_block_y + $this.move_x_y.move_y +"px",
+                        left : $this.drag_block_x_y.drag_block_x + "px"
+                    });
+                    if (($this.drag_block_x_y.drag_block_y + $this.move_x_y.move_y) < $this.movable_region.movable_y_top){
+                        $this.$element.css({
+                            top : $this.movable_region.movable_y_top+"px"
+                        });
+                    }
+                    if (($this.drag_block_x_y.drag_block_y + $this.move_x_y.move_y) > $this.movable_region.movable_y_bottom){
+                        $this.$element.css({
+                            top : $this.movable_region.movable_y_bottom +"px"
+                        });
+                    }
+                }
+            })
+        },
+
+        /**
+         * @private
+         * 控件移动方向为所有方向
+         */
+        _moveDirectionAll : function(){
+            var $this = this;
             $(document).on("mousemove",function(e){
                 if ($this.IS_DOWN){
                     $this.move_x_y.move_x = e.pageX - $this.down_x_y.down_x;
@@ -172,8 +257,7 @@
                     }
                 }
             })
-        },
-
+        }
 
     }
     $.fn.drag = function(options){
@@ -184,6 +268,7 @@
         cursor : 'move',            //鼠标移动到dragHandler节点上时的鼠标样式
         parent : 'parent',          //拖动控件的参考父元素
         dragHandler : '',           //触发拖动的节点
-        movable_region : [0,0,0,0]  //允许拖动的区域
+        movable_region : [0,0,0,0],  //允许拖动的区域
+        direction : "all"           //拖动控件的拖动方向，默认为所有方向，允许水平方向X，和垂直方向y
     };
 })(jQuery,window,document);
