@@ -74,7 +74,7 @@
                 movable_y_bottom : $this.ops.movable_region[2] == 0 ? $this.$parent.innerHeight() - $this.$element.innerHeight() : $this.ops.movable_region[2]
             };
             $this._initPosition();
-
+            // $this.callback = $this.ops.callback;
         },
 
 
@@ -116,8 +116,9 @@
          */
         _mouseUp : function(){
             var $this = this;
-            $(document).on("mouseup",function(){
+            $($this.$drag_handler).on("mouseup",function(){
                 $this.IS_DOWN = false;
+                $this.ops.callback();
             })
         },
 
@@ -269,6 +270,7 @@
         parent : 'parent',          //拖动控件的参考父元素
         dragHandler : '',           //触发拖动的节点
         movable_region : [0,0,0,0],  //允许拖动的区域
-        direction : "all"           //拖动控件的拖动方向，默认为所有方向，允许水平方向X，和垂直方向y
+        direction : "all",           //拖动控件的拖动方向，默认为所有方向，允许水平方向X，和垂直方向y
+        callback : function(){}        //拖动结束后的回调函数
     };
 })(jQuery,window,document);
